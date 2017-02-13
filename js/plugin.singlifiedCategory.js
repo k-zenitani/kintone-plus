@@ -1,31 +1,29 @@
 (function () {
 
 	kintone.events.on(['app.record.create.show', 'app.record.edit.show'], function (event) {
-		var options = document.querySelectorAll('div.input-category-popup-cybozu input[type=checkbox]');
+		var options = document.querySelectorAll('div.input-category-cybozu span.tree-node-label-cybozu');
 		var singlifier = function (event) {
-			for (var key in options) {
-				if (options[key] !== event.srcElement) {
-					if (options[key].checked) {
-						options[key].onclick = null;
-						options[key].click();
-						options[key].onclick = singlifier;
+			options.forEach(function (option) {
+				if (option !== event.srcElement) {
+					if (option.classList.contains('tree-node-select-cybozu')) {
+						option.onclick = null;
+						option.click();
+						option.onclick = singlifier;
 					}
 				}
-			}
+			});
+			event.srcElement.click();
+			event.srcElement.click();
 		};
-		for (var key in options) {
-			options[key].onclick = singlifier;
-		}
+		options.forEach(function (option) {
+			option.onclick = singlifier;
+		});
 	});
 
 	kintone.events.on(['app.record.create.submit', 'app.record.edit.submit'], function (event) {
-		var options = document.querySelectorAll('div.input-category-popup-cybozu input[type=checkbox]');
-		for (var key in options) {
-			if (options[key].checked) {
-				return;
-			}
+		if (!document.querySelectorAll('div.input-category-cybozu span.tree-node-select-cybozu').length) {
+			event.error = 'カテゴリが指定されていません。';
 		}
-		event.error = 'カテゴリが指定されていません。';
 		return event;
 	});
 
